@@ -29,6 +29,7 @@ private:
     void S();
     void DELETE_();
     void NEAR_BY_();
+    void CREATE_();
 
 private:
     Lexico LA;

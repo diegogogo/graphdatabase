@@ -177,9 +177,12 @@ void Sintactico::S()
     case DELETE:
         DELETE_();
         break;
-   // case NEAR_BY:
-   //     NEAR_BY();
-//    break;
+    case NEAR_BY:
+       NEAR_BY_();
+        break;
+    case CREATE:
+        CREATE_();
+        break;
     default:
         cout<<"ERROR";
         exit(1);
@@ -203,20 +206,176 @@ void Sintactico::DELETE_(){
     }
 }
 
+//<NEARBY>::=NEARBY PARENI TOKEN_NODO PAREND STOP
+void Sintactico::NEAR_BY_(){
+    if(nextToken==NEAR_BY){
+        nextToken=LA.lex();
+        if(nextToken==PARENI){
+            nextToken=LA.lex();
+            if(nextToken==TOKEN_NODO){
+                nextToken=LA.lex();
+                if(nextToken==PAREND){
+                    nextToken=LA.lex();
+                      if(nextToken==STOP) cout <<"Sintaxis correcta\n";
+                }
+            }
+        }
+    }
+}
+//CREATE(jalil:ALUMNO;automatas:MATERIA)
+//<CREATE>::=CREATE PARENI TOKEN_NODO DPUNTOS TOKEN_TIPONODO PCOMA
+//[TOKEN_NODO [{COMA TOKEN_NODO}] DPUNTOS TOKEN_TIPONODO]PCOMA
+//[TOKEN_NODO [{COMA TOKEN_NODO}] DPUNTOS TOKEN_TIPONODO]PCOMA
+//[TOKEN_NODO [{COMA TOKEN_NODO}] DPUNTOS TOKEN_TIPONODO]PCOMA
+//PAREND STOP
+
+void Sintactico::CREATE_(){
+if(nextToken==CREATE){
+    nextToken= LA.lex();
+    if(nextToken==PARENI){
+        nextToken= LA.lex();
+        if(nextToken==TOKEN_NODO){
+            nextToken= LA.lex();
+            if(nextToken==DPUNTOS){
+                nextToken= LA.lex();
+                if(nextToken==TOKEN_NODOTIPO){
+                    nextToken= LA.lex();
+                    if(nextToken==PCOMA){
+                        nextToken= LA.lex();//de aqui es la primera opcional
+                        if(nextToken==PCOMA){/////////////////////////////
+                            pcoma:
+                                nextToken=LA.lex();
+                                if(nextToken==PCOMA){/////////////////////////////
+                            pcoma2:
+                                nextToken=LA.lex();
+                                if(nextToken==PAREND){
+                                    parend:
+                                    nextToken=LA.lex();
+                                    if(nextToken==STOP) cout <<"Sintaxis correcta\n";
+                                }
+                        else{
+                            if(nextToken==TOKEN_NODO){
+                                nextToken=LA.lex();
+                                if(nextToken==DPUNTOS){
+                                    dpuntos3:
+                                        nextToken=LA.lex();
+                                        if(nextToken==TOKEN_NODOTIPO){
+                                            nextToken=LA.lex();
+                                            if(nextToken==PAREND){
+                                                goto parend;
+                                            }
+                                        }
+                                }
+                                else if(nextToken==COMA){
+                                    while(nextToken==COMA){
+                                    nextToken=LA.lex();
+                                    if(nextToken==TOKEN_NODO){
+                                        nextToken=LA.lex();
+                                        }
+                                      else if(nextToken==COMA){
+                                            nextToken=-1;
+                                        }
+                                    }
+                                    if(nextToken==DPUNTOS){
+                                        goto dpuntos3;
+                                        }
+                                }
+                            }
+                        }
+
+                        }
+                        else{
+                            if(nextToken==TOKEN_NODO){
+                                nextToken=LA.lex();
+                                if(nextToken==DPUNTOS){
+                                    dpuntos2:
+                                        nextToken=LA.lex();
+                                        if(nextToken==TOKEN_NODOTIPO){
+                                            nextToken=LA.lex();
+                                            if(nextToken==PCOMA){
+                                                goto pcoma2;
+                                            }
+                                        }
+                                }
+                                else if(nextToken==COMA){
+                                    while(nextToken==COMA){
+                                    nextToken=LA.lex();
+                                    if(nextToken==TOKEN_NODO){
+                                        nextToken=LA.lex();
+                                        }
+                                      else if(nextToken==COMA){
+                                            nextToken=-1;
+                                        }
+                                    }
+                                    if(nextToken==DPUNTOS){
+                                        goto dpuntos2;
+                                        }
+                                }
+                            }
+                        }
+                                //if(nextToken==PAREND){
+                                 //   nextToken=LA.lex();
+                                  //  if(nextToken==STOP) cout <<"Sintaxis correcta\n";
+                                //}
+                        }
+                        else{
+                            if(nextToken==TOKEN_NODO){
+                                nextToken=LA.lex();
+                                if(nextToken==DPUNTOS){
+                                    //cout<<"dospuntos1"<<endl;
+                                    dpuntos:
+                                        nextToken=LA.lex();
+                                        if(nextToken==TOKEN_NODOTIPO){
+                                            nextToken=LA.lex();
+                                            if(nextToken==PCOMA){
+                                                goto pcoma;
+                                            }
+                                        }
+                                }
+                                else if(nextToken==COMA){
+
+                                    while(nextToken==COMA){
+                                  //      cout<<"bloque de comas 11"<<endl;
+                                   nextToken=LA.lex();
+                                    if(nextToken==TOKEN_NODO){
+                                        nextToken=LA.lex();
+                                        }
+                                       else if(nextToken==COMA){
+                                            nextToken=-1;
+                                        }
+                                    }
+                                    if(nextToken==DPUNTOS){
+                                        goto dpuntos;
+                                        }
+                                }
+                            }
+                        }////////////////////
+                    }
+                }
+            }
+        }
+    }
+}
+}
 
 int main(){
 Lexico LA("SELECT(NEAR_BY;a3b  223  ALUMNOvd3 ghg  g 1234 ALUMNO,DOCTOR");
-	int token=SPACE;
-	while (token!=STOP) {
-		token = LA.lex();
-		cout<<"lexeme: \""<<LA.lexeme<<"\"   token: "<<token<<endl;
+	int nexToken=SPACE;
+	while (nexToken!=STOP) {
+		nexToken = LA.lex();
+		cout<<"lexeme: \""<<LA.lexeme<<"\"   token: "<<nexToken<<endl;
 	}
 cout<<endl;
 
+Sintactico SA1("NEAR_BY(Edwin)");
+SA1.syntax();
 
 
 Sintactico SA("DELETE(jalil)");
 SA.syntax();
+
+Sintactico SA2("CREATE(jalil:ALUMNO;automatas,mate,asd,asdffga,asdads:MATERIA;mate,asd,asdffga,asdads:MATERIA;mate,asd,asdffga,asdadsmate,asd,asdffga,asdads:MATERIA)");
+SA2.syntax();
 
 return 0;
 }
