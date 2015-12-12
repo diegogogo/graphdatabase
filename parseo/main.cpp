@@ -134,6 +134,11 @@ int Lexico::lex()
             getChar();
             return DPUNTOS;
             break;
+        case IGUAL:
+            addChar();
+            getChar();
+            return IGUAL;
+            break;
     }
 }
 
@@ -182,6 +187,9 @@ void Sintactico::S()
         break;
     case CREATE:
         CREATE_();
+        break;
+    case SELECT:
+        SELECT_();
         break;
     default:
         cout<<"ERROR";
@@ -358,6 +366,76 @@ if(nextToken==CREATE){
 }
 }
 
+//<SELECT>::=SELECT PARENI (TOKEN_NODO | TOKEN_NODOTIPO)
+//[FROM TOKEN_NODO
+//[WHERE TOKEN_NODOTIPO IGUAL TOKEN_NODO
+//[AND TOKEN_NODOTIPO IGUAL TOKEN_NODO|OR TOKEN_NODOTIPO IGUAL TOKEN_NODO] ] ] PAREND STOP
+
+//SELECT(Jalil)
+//SELECT(ALUMNO FROM automatas)
+//SELECT(ALUMNO FROM automatas WHERE DOCTOR=raul)
+//SELECT(ALUMNO FROM automatas WHERE DOCTOR=raul AND MATERIA = pizza)
+void Sintactico::SELECT_(){
+if(nextToken==SELECT){
+    nextToken=LA.lex();
+    if(nextToken==PARENI){
+        nextToken=LA.lex();
+        if(nextToken==TOKEN_NODO||nextToken==TOKEN_NODOTIPO){
+            nextToken=LA.lex();
+            if(nextToken==PAREND){
+             parend:
+                nextToken=LA.lex();
+                if(nextToken==STOP) cout <<"Sintaxis correcta\n";
+            }
+            else{
+                if(nextToken==FROM){
+                         cout<<"detecto from"<<endl;
+                    nextToken=LA.lex();
+                    if(nextToken==TOKEN_NODO){
+                         cout<<"detecto token nodo"<<endl;
+                        nextToken=LA.lex();
+                        if(nextToken==WHERE){
+                            cout<<"detecto where"<<endl;
+                            nextToken=LA.lex();
+                            if(nextToken==TOKEN_NODOTIPO){
+                                 cout<<"nodo tipo"<<endl;
+                                nextToken=LA.lex();
+                                if(nextToken==IGUAL){
+                                    nextToken=LA.lex();
+                                     cout<<"detecto igual"<<endl;
+                                    if(nextToken==TOKEN_NODO){
+                                        nextToken=LA.lex();
+                                        cout<<"detecto token nodo"<<endl;
+                                        if(nextToken==ANDOR){
+                                            nextToken=LA.lex();
+                                            if(nextToken==TOKEN_NODOTIPO){
+                                                nextToken=LA.lex();
+                                                if(nextToken==IGUAL){
+                                                    nextToken=LA.lex();
+                                                    if(nextToken==TOKEN_NODO){
+                                                        nextToken=LA.lex();
+                                                        if(nextToken==PAREND){ goto parend;}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if(nextToken==PAREND){
+                                        goto parend;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if(nextToken==PAREND)
+                            goto parend;
+                    }
+                }
+            }
+    }
+    }
+}
+}
+
 int main(){
 Lexico LA("SELECT(NEAR_BY;a3b  223  ALUMNOvd3 ghg  g 1234 ALUMNO,DOCTOR");
 	int nexToken=SPACE;
@@ -376,6 +454,15 @@ SA.syntax();
 
 Sintactico SA2("CREATE(jalil:ALUMNO;automatas,mate,asd,asdffga,asdads:MATERIA;mate,asd,asdffga,asdads:MATERIA;mate,asd,asdffga,asdadsmate,asd,asdffga,asdads:MATERIA)");
 SA2.syntax();
+
+Sintactico SA3("SELECT(ALUMNO FROM automatas WHERE DOCTOR=raul AND MATERIA = pizza)");
+SA3.syntax();
+
+
+//SELECT(Jalil)
+//SELECT(ALUMNO FROM automatas)
+//SELECT(ALUMNO FROM automatas WHERE DOCTOR=raul)
+//SELECT(ALUMNO FROM automatas WHERE DOCTOR=raul AND MATERIA = pizza)
 
 return 0;
 }
